@@ -1,0 +1,166 @@
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using System.Runtime.InteropServices;
+enum Screen
+    {
+    Title,Animation,End
+
+
+
+}
+namespace Summative_1_5
+{
+    public class Game1 : Game
+    {
+        private GraphicsDeviceManager _graphics;
+        private SpriteBatch _spriteBatch;
+        Screen screen;
+        MouseState mouseState, prevMouseState;
+        Texture2D titleScreen, bnnuy, playButtonImg, charaset;
+        Rectangle bnnuyRect, window, playButton;
+        Vector2 bnnuySpeed;
+        SoundEffect bonk;
+
+        // A timer that stores milliseconds.
+        float timer;
+
+        // An int that is the threshold for the timer.
+        int threshold;
+
+        // A Rectangle array that stores sourceRectangles for animations.
+        Rectangle[] sourceRectangles;
+
+        // These bytes tell the spriteBatch.Draw() what sourceRectangle to display.
+        byte previousAnimationIndex;
+        byte currentAnimationIndex;
+
+        public Game1()
+        {
+            _graphics = new GraphicsDeviceManager(this);
+            Content.RootDirectory = "Content";
+            IsMouseVisible = true;
+        }
+
+        protected override void Initialize()
+        {
+            // TODO: Add your initialization logic here
+            screen = Screen.Title;
+            mouseState = Mouse.GetState();
+            base.Initialize();
+            window = new Rectangle(0, 0, 800, 500);
+            //384, 182
+            playButton = new Rectangle(300, 200, 100, 100);
+            bnnuyRect = new Rectangle(300, 200, 100, 100);
+            _graphics.PreferredBackBufferWidth = window.Width;  // set this value to the desired width of your window
+            _graphics.PreferredBackBufferHeight = window.Height;   // set this value to the desired height of your window
+
+            base.Initialize();
+        }
+
+        protected override void LoadContent()
+        {
+            timer = 0;
+
+            // Set an initial threshold of 250ms, you can change this to alter the speed of the animation (lower number = faster animation).
+            threshold = 250;
+
+            // Three sourceRectangles contain the coordinates of Alex's three down-facing sprites on the charaset.
+            sourceRectangles = new Rectangle[3];
+            sourceRectangles[0] = new Rectangle(0, 128, 48, 64);
+            sourceRectangles[1] = new Rectangle(48, 128, 48, 64);
+            sourceRectangles[2] = new Rectangle(96, 128, 48, 64);
+
+            // This tells the animation to start on the left-side sprite.
+            previousAnimationIndex = 2;
+            currentAnimationIndex = 1;
+
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            playButtonImg = Content.Load<Texture2D>("playButton");
+            bnnuy = Content.Load<Texture2D>("LayDumbRabbit");
+            charaset = Content.Load<Texture2D>("charaset");
+            // TODO: use this.Content to load your game content here
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                Exit();
+            this.Window.Title = mouseState.Position.ToString();
+            mouseState = Mouse.GetState();    
+            prevMouseState = mouseState;
+            if (screen == Screen.Title)
+            {
+                if (mouseState.LeftButton == ButtonState.Pressed && playButton.Contains(mouseState.Position))
+                        screen = Screen.Animation;
+
+            }
+            else if (screen == Screen.Animation)
+            {
+                // TODO: Add your update logic here
+                if (timer > threshold)
+                {
+                    // If Alex is in the middle sprite of the animation.
+                    if (currentAnimationIndex == 1)
+                    {
+                        // If the previous animation was the left-side sprite, then the next animation should be the right-side sprite.
+                        if (previousAnimationIndex == 0)
+                        {
+                            currentAnimationIndex = 2;
+                        }
+                        else
+
+                        // If not, then the next animation should be the left-side sprite.
+                        {
+                            currentAnimationIndex = 0;
+                        }
+
+                        // Track the animation.
+                        previousAnimationIndex = currentAnimationIndex;
+                    }
+                    // If Alex was not in the middle sprite of the animation, he should return to the middle sprite.
+                    else
+                    {
+                        currentAnimationIndex = 1;
+                    }
+
+                    // Reset the timer.
+                    timer = 0;
+                }
+                // If the timer has not reached the threshold, then add the milliseconds that have past since the last Update() to the timer.
+                else
+                {
+                    timer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                }
+            }
+            // TODO: Add your update logic here
+
+            base.Update(gameTime);
+        }
+
+        protected override void Draw(GameTime gameTime)
+        {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            _spriteBatch.Begin();
+           
+            if (screen == Screen.Title)
+            {
+
+                _spriteBatch.Draw(playButtonImg, playButton, Color.White);
+            }
+            else if (screen == Screen.Animation)
+            {
+                Rectangle sourceRectangle = new Rectangle(0, 0, 48, 64);
+
+                // Only draw the area contained within the sourceRectangle.
+                _spriteBatch.Draw(charaset, new Vector2(100, 100), sourceRectangles[currentAnimationIndex], Color.White);
+
+            }
+            _spriteBatch.End();
+            // TODO: Add your drawing code here
+
+            base.Draw(gameTime);
+        }
+    }
+}
