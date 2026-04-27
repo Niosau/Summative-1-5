@@ -110,7 +110,7 @@ namespace Summative_1_5
                     {
                         currentAnimationIndex = 0;
                     }
-
+                    
                     timer = 0;
                 }
                 else
