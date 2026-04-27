@@ -49,7 +49,7 @@ namespace Summative_1_5
             screen = Screen.Title;
             mouseState = Mouse.GetState();
             base.Initialize();
-            window = new Rectangle(0, 0, 800, 500);
+            window = new Rectangle(0, 0, 1250, 1250);
             //384, 182
             playButton = new Rectangle(300, 200, 100, 100);
             bnnuyRect = new Rectangle(300, 200, 100, 100);
@@ -67,10 +67,11 @@ namespace Summative_1_5
             threshold = 250;
 
             // Three sourceRectangles contain the coordinates of Alex's three down-facing sprites on the charaset.
-            sourceRectangles = new Rectangle[3];
-            sourceRectangles[0] = new Rectangle(0, 128, 48, 64);
-            sourceRectangles[1] = new Rectangle(48, 128, 48, 64);
-            sourceRectangles[2] = new Rectangle(96, 128, 48, 64);
+            sourceRectangles = new Rectangle[4];
+            sourceRectangles[0] = new Rectangle(0, 0, 300, 350);
+            sourceRectangles[1] = new Rectangle(350, 0, 250, 350);
+            sourceRectangles[2] = new Rectangle(600, 0, 300, 350);
+            sourceRectangles[3] = new Rectangle(1000, 0, 300, 350);
 
             // This tells the animation to start on the left-side sprite.
             previousAnimationIndex = 2;
@@ -79,7 +80,7 @@ namespace Summative_1_5
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             playButtonImg = Content.Load<Texture2D>("playButton");
             bnnuy = Content.Load<Texture2D>("LayDumbRabbit");
-            charaset = Content.Load<Texture2D>("charaset");
+            charaset = Content.Load<Texture2D>("bunnyRoll");
             // TODO: use this.Content to load your game content here
         }
 
@@ -99,36 +100,19 @@ namespace Summative_1_5
             else if (screen == Screen.Animation)
             {
                 // TODO: Add your update logic here
+                int totalAnimations = 4; // change this when you add more
+
                 if (timer > threshold)
                 {
-                    // If Alex is in the middle sprite of the animation.
-                    if (currentAnimationIndex == 1)
-                    {
-                        // If the previous animation was the left-side sprite, then the next animation should be the right-side sprite.
-                        if (previousAnimationIndex == 0)
-                        {
-                            currentAnimationIndex = 2;
-                        }
-                        else
+                    currentAnimationIndex++;
 
-                        // If not, then the next animation should be the left-side sprite.
-                        {
-                            currentAnimationIndex = 0;
-                        }
-
-                        // Track the animation.
-                        previousAnimationIndex = currentAnimationIndex;
-                    }
-                    // If Alex was not in the middle sprite of the animation, he should return to the middle sprite.
-                    else
+                    if (currentAnimationIndex >= totalAnimations)
                     {
-                        currentAnimationIndex = 1;
+                        currentAnimationIndex = 0;
                     }
 
-                    // Reset the timer.
                     timer = 0;
                 }
-                // If the timer has not reached the threshold, then add the milliseconds that have past since the last Update() to the timer.
                 else
                 {
                     timer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -151,7 +135,7 @@ namespace Summative_1_5
             }
             else if (screen == Screen.Animation)
             {
-                Rectangle sourceRectangle = new Rectangle(0, 0, 48, 64);
+                Rectangle sourceRectangle = new Rectangle(0, 0, 600, 600);
 
                 // Only draw the area contained within the sourceRectangle.
                 _spriteBatch.Draw(charaset, new Vector2(100, 100), sourceRectangles[currentAnimationIndex], Color.White);
