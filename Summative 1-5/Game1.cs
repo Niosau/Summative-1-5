@@ -2,13 +2,13 @@
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Runtime.InteropServices;
 enum Screen
-    {
-    Title,Animation,End
-
-
-
+{
+    Title,
+    Animation,
+    End
 }
 namespace Summative_1_5
 {
@@ -19,18 +19,21 @@ namespace Summative_1_5
         Screen screen;
         MouseState mouseState, prevMouseState;
         Texture2D titleScreen, bnnuy, playButtonImg, charaset;
-        Rectangle bnnuyRect, window, playButton;
-        Vector2 bnnuySpeed;
+        Rectangle bunnyRect, window, playButton;
+        Vector2 bunnySpeed;
         SoundEffect bonk;
 
         // A timer that stores milliseconds.
-        float timer;
+        float bunnyFrameTimer;
+        int totalAnimations = 8; // change this when you add more
+
+        float bunnyStartTimer;
 
         // An int that is the threshold for the timer.
         int threshold;
 
         // A Rectangle array that stores sourceRectangles for animations.
-        Rectangle[] sourceRectangles;
+        Rectangle[] bunnyRectangles;
 
         // These bytes tell the spriteBatch.Draw() what sourceRectangle to display.
         byte previousAnimationIndex;
@@ -52,35 +55,40 @@ namespace Summative_1_5
             window = new Rectangle(0, 0, 1250, 1250);
             //384, 182
             playButton = new Rectangle(300, 200, 100, 100);
-            bnnuyRect = new Rectangle(300, 200, 100, 100);
+            bunnyRect = new Rectangle(100, 100, 100, 100);
+            bunnySpeed = new Vector2(1, 0);
             _graphics.PreferredBackBufferWidth = window.Width;  // set this value to the desired width of your window
             _graphics.PreferredBackBufferHeight = window.Height;   // set this value to the desired height of your window
-
+            bunnyStartTimer = 0;
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            timer = 0;
+            bunnyFrameTimer = 0;
 
             // Set an initial threshold of 250ms, you can change this to alter the speed of the animation (lower number = faster animation).
             threshold = 250;
 
             // Three sourceRectangles contain the coordinates of Alex's three down-facing sprites on the charaset.
-            sourceRectangles = new Rectangle[4];
-            sourceRectangles[0] = new Rectangle(0, 0, 300, 350);
-            sourceRectangles[1] = new Rectangle(350, 0, 250, 350);
-            sourceRectangles[2] = new Rectangle(600, 0, 300, 350);
-            sourceRectangles[3] = new Rectangle(1000, 0, 300, 350);
+            bunnyRectangles = new Rectangle[8];
+            bunnyRectangles[0] = new Rectangle(0, 0, 369, 313);
+            bunnyRectangles[1] = new Rectangle(372, 0, 311, 347);
+            bunnyRectangles[2] = new Rectangle(720, 0, 277, 369);
+            bunnyRectangles[3] = new Rectangle(0, 315, 363, 320);
+            bunnyRectangles[4] = new Rectangle(365, 350, 362, 317);
+            bunnyRectangles[5] = new Rectangle(726, 372, 340, 335);
+            bunnyRectangles[6] = new Rectangle(0, 325, 309, 370);
+            bunnyRectangles[7] = new Rectangle(315, 325, 318, 357);
 
             // This tells the animation to start on the left-side sprite.
             previousAnimationIndex = 2;
-            currentAnimationIndex = 1;
+            currentAnimationIndex = 0;
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             playButtonImg = Content.Load<Texture2D>("playButton");
             bnnuy = Content.Load<Texture2D>("LayDumbRabbit");
-            charaset = Content.Load<Texture2D>("bunnyRoll");
+            charaset = Content.Load<Texture2D>("BunnyRoll45");
             // TODO: use this.Content to load your game content here
         }
 
@@ -88,6 +96,9 @@ namespace Summative_1_5
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            
+
             this.Window.Title = mouseState.Position.ToString();
             mouseState = Mouse.GetState();    
             prevMouseState = mouseState;
@@ -100,23 +111,13 @@ namespace Summative_1_5
             else if (screen == Screen.Animation)
             {
                 // TODO: Add your update logic here
-                int totalAnimations = 4; // change this when you add more
+                
 
-                if (timer > threshold)
-                {
-                    currentAnimationIndex++;
+                bunnyRect.X += (int)bunnySpeed.X;
+                UpdateBunnyFrame(gameTime);
 
-                    if (currentAnimationIndex >= totalAnimations)
-                    {
-                        currentAnimationIndex = 0;
-                    }
-                    
-                    timer = 0;
-                }
-                else
-                {
-                    timer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-                }
+                
+               
             }
             // TODO: Add your update logic here
 
@@ -135,10 +136,8 @@ namespace Summative_1_5
             }
             else if (screen == Screen.Animation)
             {
-                Rectangle sourceRectangle = new Rectangle(0, 0, 600, 600);
-
                 // Only draw the area contained within the sourceRectangle.
-                _spriteBatch.Draw(charaset, new Vector2(100, 100), sourceRectangles[currentAnimationIndex], Color.White);
+                _spriteBatch.Draw(charaset, bunnyRect, bunnyRectangles[currentAnimationIndex], Color.White);
 
             }
             _spriteBatch.End();
@@ -146,5 +145,20 @@ namespace Summative_1_5
 
             base.Draw(gameTime);
         }
+
+        public void UpdateBunnyFrame(GameTime gameTime)
+        {
+            bunnyFrameTimer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (bunnyFrameTimer > threshold)
+            {
+                currentAnimationIndex++;
+                if (currentAnimationIndex >= totalAnimations)
+                {
+                    currentAnimationIndex = 0;
+                }
+                bunnyFrameTimer = 0;
+            }
+        }
+
     }
 }
