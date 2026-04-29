@@ -63,10 +63,10 @@ namespace Summative_1_5
         {
             timer = 0;
 
-            // Set an initial threshold of 250ms, you can change this to alter the speed of the animation (lower number = faster animation).
+            // You can change this to alter the speed of the animation (lower number = faster animation).
             threshold = 250;
 
-            // Three sourceRectangles contain the coordinates of Alex's three down-facing sprites on the charaset.
+            // Put each frame in le rectangle
             sourceRectangles = new Rectangle[4];
             sourceRectangles[0] = new Rectangle(0, 0, 300, 350);
             sourceRectangles[1] = new Rectangle(350, 0, 250, 350);
@@ -142,7 +142,6 @@ namespace Summative_1_5
 
             }
             _spriteBatch.End();
-            // TODO: Add your drawing code here
 
             base.Draw(gameTime);
         }
