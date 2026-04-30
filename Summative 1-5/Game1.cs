@@ -18,8 +18,8 @@ namespace Summative_1_5
         private SpriteBatch _spriteBatch;
         Screen screen;
         MouseState mouseState, prevMouseState;
-        Texture2D titleScreen, bnnuy, playButtonImg, charaset;
-        Rectangle bunnyRect, window, playButton;
+        Texture2D titleScreen, bnnuy, playButtonImg, charaset, dragonFly, dragoneFire;
+        Rectangle bunnyRect, window, playButton, dragonRect;
         Vector2 bunnySpeed;
         SoundEffect bonk;
 
@@ -56,7 +56,7 @@ namespace Summative_1_5
             //384, 182
             playButton = new Rectangle(300, 200, 100, 100);
             bunnyRect = new Rectangle(100, 100, 100, 100);
-            bunnySpeed = new Vector2(1, 0);
+            bunnySpeed = new Vector2(0, 0);
             _graphics.PreferredBackBufferWidth = window.Width;  // set this value to the desired width of your window
             _graphics.PreferredBackBufferHeight = window.Height;   // set this value to the desired height of your window
             bunnyStartTimer = 0;
@@ -70,7 +70,7 @@ namespace Summative_1_5
             // You can change this to alter the speed of the animation (lower number = faster animation).
             threshold = 250;
 
-            // Three sourceRectangles contain the coordinates of Alex's three down-facing sprites on the charaset.
+            // Animation rectangles or smth 
             bunnyRectangles = new Rectangle[8];
             bunnyRectangles[0] = new Rectangle(0, 0, 369, 313);
             bunnyRectangles[1] = new Rectangle(372, 0, 311, 347);
@@ -78,8 +78,8 @@ namespace Summative_1_5
             bunnyRectangles[3] = new Rectangle(0, 315, 363, 320);
             bunnyRectangles[4] = new Rectangle(365, 350, 362, 317);
             bunnyRectangles[5] = new Rectangle(726, 372, 340, 335);
-            bunnyRectangles[6] = new Rectangle(0, 325, 309, 370);
-            bunnyRectangles[7] = new Rectangle(315, 325, 318, 357);
+            bunnyRectangles[6] = new Rectangle(315, 330, 309, 370);
+            bunnyRectangles[7] = new Rectangle(0, 330, 318, 357);
 
             // This tells the animation to start on the left-side sprite.
             previousAnimationIndex = 2;
