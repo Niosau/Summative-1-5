@@ -37,6 +37,12 @@
 /processorParam:TextureFormat=Color
 /build:charaset.png
 
+#begin Commander2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Commander2.wav
+
 #begin dragonFireBreathe.webp
 /importer:TextureImporter
 /processor:TextureProcessor

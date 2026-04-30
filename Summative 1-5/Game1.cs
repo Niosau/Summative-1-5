@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 enum Screen
 {
     Title,
@@ -19,11 +20,13 @@ namespace Summative_1_5
         Screen screen;
         MouseState mouseState, prevMouseState;
         Texture2D titleScreen, bnnuy, playButtonImg, charaset, dragonFly, dragonFire, dragonTexture;
-        Rectangle bunnyRect, window, playButton, dragonRect;
+        Rectangle bunnyRect, window, playButton, dragonRect, bunnyRect2, bunnyRect3, bunnyRect4, bunnyRect5;
         Vector2 bunnySpeed;
-        SoundEffect bonk;
+        SoundEffect commander;
         Vector2 dragonSpeed;
-        bool fly = true;
+        Color bg;
+        float wait = 0, interval = 1f;
+        bool fly = true, army = false;
 
         
         // A timer that stores milliseconds.
@@ -52,13 +55,18 @@ namespace Summative_1_5
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            
             screen = Screen.Title;
             mouseState = Mouse.GetState();
             base.Initialize();
             window = new Rectangle(0, 0, 800, 250);
             //384, 182
-            playButton = new Rectangle(400, 125, 100, 100);
+            playButton = new Rectangle(350, 90, 100, 100);
             bunnyRect = new Rectangle(100, 100, 100, 100);
+            bunnyRect2 = new Rectangle(100, 100, 100, 100);
+            bunnyRect3 = new Rectangle(200, 100, 50, 50);
+            bunnyRect4 = new Rectangle(50, 50, 200, 200);
+            bunnyRect5 = new Rectangle(100, 300, 150, 50);
             bunnySpeed = new Vector2(1, 0);
             dragonRect = new Rectangle(800, 100, 100, 100);
             dragonSpeed = new Vector2(0, 0);
@@ -74,7 +82,7 @@ namespace Summative_1_5
         protected override void LoadContent()
         {
             bunnyFrameTimer = 0;
-
+            
             // You can change this to alter the speed of the animation (lower number = faster animation).
             threshold = 100;
 
@@ -106,7 +114,9 @@ namespace Summative_1_5
             playButtonImg = Content.Load<Texture2D>("playButton");
             bnnuy = Content.Load<Texture2D>("LayDumbRabbit");
             charaset = Content.Load<Texture2D>("BunnyRoll45");
-            
+
+            commander = Content.Load<SoundEffect>("Commander2");
+
             dragonFly = Content.Load<Texture2D>("dragonFly"); 
             dragonFire = Content.Load<Texture2D>("dragonFireBreathe");
             dragonTexture = dragonFly;
@@ -139,6 +149,10 @@ namespace Summative_1_5
                 dragonRect.X += (int)dragonSpeed.X;
                 dragonRect.Y += (int)dragonSpeed.Y;
                 bunnyRect.X += (int)bunnySpeed.X;
+                bunnyRect2.X += (int)bunnySpeed.X;
+                bunnyRect3.X += (int)bunnySpeed.X;
+                bunnyRect4.X += (int)bunnySpeed.X;
+                bunnyRect5.X += (int)bunnySpeed.X;
                 UpdateBunnyFrame(gameTime);
 
                 if (bunnyRect.X == 570)
@@ -154,13 +168,16 @@ namespace Summative_1_5
                 {
                     dragonSpeed = new Vector2(0, 0); 
                     dragonTexture = dragonFire;
-                    bunnySpeed.X = -1;
+                    bunnySpeed.X = -3;
+                    threshold = 50;
                 }
 
                 if (bunnyRect.X == window.X)
                 {
                     bunnySpeed.X = 0;
+                    commander.Play();
                 }
+                
 
 
             }
@@ -183,6 +200,14 @@ namespace Summative_1_5
             {
                 // Only draw the area contained within the sourceRectangle.
                 _spriteBatch.Draw(charaset, bunnyRect, bunnyRectangles[currentAnimationIndex], Color.White);
+                if (army = true)
+                {
+                    _spriteBatch.Draw(charaset, bunnyRect2, bunnyRectangles[currentAnimationIndex], Color.White);
+                    _spriteBatch.Draw(charaset, bunnyRect3, bunnyRectangles[currentAnimationIndex], Color.White);
+                    _spriteBatch.Draw(charaset, bunnyRect4, bunnyRectangles[currentAnimationIndex], Color.White);
+                    _spriteBatch.Draw(charaset, bunnyRect5, bunnyRectangles[currentAnimationIndex], Color.White);
+                }
+
                 if (bunnyRect.X == 570 || fly == false) 
                 {
                     _spriteBatch.Draw(dragonTexture, dragonRect, Color.White);
