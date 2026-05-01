@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
 enum Screen
@@ -25,8 +26,8 @@ namespace Summative_1_5
         SoundEffect commander;
         Vector2 dragonSpeed;
         Color bg;
-        float wait = 0, interval = 1f;
-        bool fly = true, army = false;
+        float wait = 0;
+        bool fly = true, army = false, soundBoom = false;
 
         
         // A timer that stores milliseconds.
@@ -59,16 +60,16 @@ namespace Summative_1_5
             screen = Screen.Title;
             mouseState = Mouse.GetState();
             base.Initialize();
-            window = new Rectangle(0, 0, 800, 250);
+            window = new Rectangle(0, 0, 800, 800);
             //384, 182
-            playButton = new Rectangle(350, 90, 100, 100);
-            bunnyRect = new Rectangle(100, 100, 100, 100);
-            bunnyRect2 = new Rectangle(100, 100, 100, 100);
-            bunnyRect3 = new Rectangle(200, 100, 50, 50);
-            bunnyRect4 = new Rectangle(50, 50, 200, 200);
+            playButton = new Rectangle(300, 400, 200, 100);
+            bunnyRect = new Rectangle(100, 300, 100, 100);
+            bunnyRect2 = new Rectangle(100, 300, 100, 100);
+            bunnyRect3 = new Rectangle(200, 300, 50, 50);
+            bunnyRect4 = new Rectangle(50, 300, 200, 200);
             bunnyRect5 = new Rectangle(100, 300, 150, 50);
             bunnySpeed = new Vector2(1, 0);
-            dragonRect = new Rectangle(800, 100, 100, 100);
+            dragonRect = new Rectangle(800, 300, 100, 100);
             dragonSpeed = new Vector2(0, 0);
 
 
@@ -155,7 +156,7 @@ namespace Summative_1_5
                 bunnyRect5.X += (int)bunnySpeed.X;
                 UpdateBunnyFrame(gameTime);
 
-                if (bunnyRect.X == 570)
+                if (bunnyRect.X == 570 && !soundBoom)
                 {
                     bunnySpeed = new Vector2(0, 0);
                     threshold = 0;
@@ -164,7 +165,7 @@ namespace Summative_1_5
                 }
 
 
-                if (dragonRect.X == 680)
+                if (dragonRect.X == 680 && !soundBoom)
                 {
                     dragonSpeed = new Vector2(0, 0); 
                     dragonTexture = dragonFire;
@@ -172,12 +173,25 @@ namespace Summative_1_5
                     threshold = 50;
                 }
 
-                if (bunnyRect.X == window.X)
+                if (bunnyRect.X == window.X && !soundBoom)
                 {
                     bunnySpeed.X = 0;
+                    soundBoom = true;
                     commander.Play();
                 }
-                
+                this.Window.Title = wait.ToString();
+                if (wait >= 2)
+                {
+                    army = true;
+                    wait = 2;
+                    bunnySpeed.X = 1;
+                    threshold = 100;
+                }
+                if (soundBoom)
+                {
+                    wait += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                }
+               
 
 
             }
@@ -200,7 +214,7 @@ namespace Summative_1_5
             {
                 // Only draw the area contained within the sourceRectangle.
                 _spriteBatch.Draw(charaset, bunnyRect, bunnyRectangles[currentAnimationIndex], Color.White);
-                if (army = true)
+                if (army == true)
                 {
                     _spriteBatch.Draw(charaset, bunnyRect2, bunnyRectangles[currentAnimationIndex], Color.White);
                     _spriteBatch.Draw(charaset, bunnyRect3, bunnyRectangles[currentAnimationIndex], Color.White);
