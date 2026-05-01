@@ -10,6 +10,7 @@ enum Screen
 {
     Title,
     Animation,
+    Cooked,
     End
 }
 namespace Summative_1_5
@@ -20,14 +21,14 @@ namespace Summative_1_5
         private SpriteBatch _spriteBatch;
         Screen screen;
         MouseState mouseState, prevMouseState;
-        Texture2D titleScreen, bnnuy, playButtonImg, charaset, dragonFly, dragonFire, dragonTexture;
-        Rectangle bunnyRect, window, playButton, dragonRect, bunnyRect2, bunnyRect3, bunnyRect4, bunnyRect5;
+        Texture2D titleScreen, bnnuy, playButtonImg, charaset, dragonFly, dragonFire, dragonTexture, speed, waterGun;
+        Rectangle bunnyRect, window, playButton, dragonRect, bunnyRect2, bunnyRect3, bunnyRect4, bunnyRect5, speedRect, waterGunRect;
         Vector2 bunnySpeed;
         SoundEffect commander;
         Vector2 dragonSpeed;
         Color bg;
-        float wait = 0;
-        bool fly = true, army = false, soundBoom = false;
+        float wait = 0, cookedWait = 0, opacity = 0f, fadeSpeed = 0.5f, armyShow = 0, armyGo = 0;
+        bool fly = true, army = false, soundBoom = false, offCooked = false;
 
         
         // A timer that stores milliseconds.
@@ -64,11 +65,17 @@ namespace Summative_1_5
             //384, 182
             playButton = new Rectangle(300, 400, 200, 100);
             bunnyRect = new Rectangle(100, 300, 100, 100);
-            bunnyRect2 = new Rectangle(100, 300, 100, 100);
-            bunnyRect3 = new Rectangle(200, 300, 50, 50);
-            bunnyRect4 = new Rectangle(50, 300, 200, 200);
-            bunnyRect5 = new Rectangle(100, 300, 150, 50);
+            bunnyRect2 = new Rectangle(-100, 200, 100, 100);
+            bunnyRect3 = new Rectangle(-100, 150, 50, 50);
+            bunnyRect4 = new Rectangle(-100, 400, 200, 200);
+            bunnyRect5 = new Rectangle(-100, 350, 150, 50);
             bunnySpeed = new Vector2(1, 0);
+
+            speedRect = new Rectangle(400, 350, 300, 300);
+           
+            waterGunRect.X = bunnyRect.X + 5;
+            waterGunRect.Y = bunnyRect.Y - 5;
+
             dragonRect = new Rectangle(800, 300, 100, 100);
             dragonSpeed = new Vector2(0, 0);
 
@@ -117,10 +124,14 @@ namespace Summative_1_5
             charaset = Content.Load<Texture2D>("BunnyRoll45");
 
             commander = Content.Load<SoundEffect>("Commander2");
+            waterGun = Content.Load<Texture2D>("waterGun");
 
             dragonFly = Content.Load<Texture2D>("dragonFly"); 
             dragonFire = Content.Load<Texture2D>("dragonFireBreathe");
             dragonTexture = dragonFly;
+
+            speed = Content.Load<Texture2D>("speed");
+
                 
 
 
@@ -180,25 +191,70 @@ namespace Summative_1_5
                     commander.Play();
                 }
                 this.Window.Title = wait.ToString();
-                if (wait >= 2)
+                if (wait >= 2 && !offCooked)
                 {
                     army = true;
-                    wait = 2;
-                    bunnySpeed.X = 1;
-                    threshold = 100;
+  
                 }
                 if (soundBoom)
                 {
                     wait += (float)gameTime.ElapsedGameTime.TotalSeconds;
                 }
+                if (army && !offCooked)
+                {
+
+                    armyShow += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    armyGo += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                    if (armyShow >= 2)
+                    {
+                        screen = Screen.Cooked;
+                    }
+                }
+               
+                if (offCooked)
+                {
+                    bunnySpeed.X = 1;
+                    dragonTexture = speed;
+                    if (bunnyRect.X == 570)
+                    {
+                        bunnySpeed = new Vector2(0, 0);
+                        threshold = 0;
+                        currentAnimationIndex = 0;
+                        
+                    }
+                }
                
 
 
             }
-            // TODO: Add your update logic here
+                else if (screen == Screen.Cooked)
+                {
+
+                   cookedWait += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    if (cookedWait >= 3)
+                    {
+                    offCooked = true;
+                    screen = Screen.Animation;
+                    }
+                
+                    
+
+                    if (opacity < 1.0f)
+                    {
+                        opacity += fadeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                        if (opacity > 1.0f) opacity = 1.0f;
+                    }
+                }
+
 
             base.Update(gameTime);
+
         }
+                // TODO: Add your update logic here
+
+                
+        
 
         protected override void Draw(GameTime gameTime)
         {
@@ -212,6 +268,7 @@ namespace Summative_1_5
             }
             else if (screen == Screen.Animation)
             {
+                _spriteBatch.Draw(waterGun, waterGunRect, Color.White);
                 // Only draw the area contained within the sourceRectangle.
                 _spriteBatch.Draw(charaset, bunnyRect, bunnyRectangles[currentAnimationIndex], Color.White);
                 if (army == true)
@@ -226,10 +283,17 @@ namespace Summative_1_5
                 {
                     _spriteBatch.Draw(dragonTexture, dragonRect, Color.White);
                     
+
                 }
+                
+            }
+            else if (screen == Screen.Cooked)
+            {
+                _spriteBatch.Draw(dragonTexture, new Vector2(300,300), Color.White);
+                _spriteBatch.Draw(speed, speedRect, Color.White * opacity);
             }
 
-            _spriteBatch.End();
+                _spriteBatch.End();
 
             base.Draw(gameTime);
         }
