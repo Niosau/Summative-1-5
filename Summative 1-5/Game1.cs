@@ -22,11 +22,11 @@ namespace Summative_1_5
         private SpriteBatch _spriteBatch;
         Screen screen;
         MouseState mouseState, prevMouseState;
-        Texture2D titleScreen, bnnuy, playButtonImg, charaset, dragonFly, dragonFire, dragonTexture, speed, waterGun;
-        Texture2D backGround;
-        Rectangle bunnyRect, window, playButton, dragonRect, bunnyRect2, bunnyRect3, bunnyRect4, bunnyRect5, speedRect, waterGunRect;
-        Rectangle offset;
-        Vector2 bunnySpeed;
+        Texture2D bnnuy, playButtonImg, charaset, dragonFly, dragonFire, dragonTexture, speed, waterGun, waterPellet;
+        Texture2D backGround, grasslands, menuBg, menuText;
+        Rectangle bunnyRect, window, playButton, dragonRect, bunnyRect2, bunnyRect3, bunnyRect4, bunnyRect5, speedRect;
+        Rectangle offset, textRect, offset2, offset3, offset4, offset5, bulletRect, bulletRect2, bulletRect3, bulletRect4, bulletRect5;
+        Vector2 bunnySpeed, bulletSpeed;
         SoundEffect commander;
         Vector2 dragonSpeed;
         Color bg;
@@ -37,7 +37,7 @@ namespace Summative_1_5
 
 
         float wait = 0, cookedWait = 0, opacity = 0f, fadeSpeed = 0.5f, armyShow = 0, armyGo = 0;
-        bool fly = true, army = false, soundBoom = false, offCooked = false;
+        bool fly = true, army = false, soundBoom = false, offCooked = false, triggerDigger = false;
 
         
         // A timer that stores milliseconds.
@@ -80,21 +80,20 @@ namespace Summative_1_5
             bunnyRect5 = new Rectangle(-300, 345, 100, 100);
             bunnySpeed = new Vector2(1, 0);
 
-            speedRect = new Rectangle(400, 350, 300, 300);
-           
+            bulletRect = new Rectangle(offset.X, offset.Y, 20, 20);
+            bulletRect2 = new Rectangle(offset2.X, offset2.Y, 20, 20);
+            bulletRect3 = new Rectangle(offset3.X, offset3.Y, 20, 20);
+            bulletRect4 = new Rectangle(offset4.X, offset4.Y, 20, 20);
+            bulletRect5 = new Rectangle(offset5.X, offset5.Y, 20, 20);
 
+            textRect = new Rectangle(155, 100, 500, 300);
 
+            speedRect = new Rectangle(415, 350, 300, 300);
+   
             dragonRect = new Rectangle(800, 330, 100, 100);
             dragonSpeed = new Vector2(0, 0);
 
-
-
-
-
-
-
-            
-
+            bulletSpeed = new Vector2(7, 0);
             _graphics.PreferredBackBufferWidth = window.Width;  // set this value to the desired width of your window
             _graphics.PreferredBackBufferHeight = window.Height;   // set this value to the desired height of your window
             bunnyStartTimer = 0;
@@ -137,11 +136,12 @@ namespace Summative_1_5
             playButtonImg = Content.Load<Texture2D>("playButton");
             bnnuy = Content.Load<Texture2D>("LayDumbRabbit");
             charaset = Content.Load<Texture2D>("BunnyRoll45");
-            backGround = Content.Load<Texture2D>("grasslands");
-
+            grasslands = Content.Load<Texture2D>("grasslands");
+            menuBg = Content.Load<Texture2D>("grassBg");
+            menuText = Content.Load<Texture2D>("bunnyTxT");
             commander = Content.Load<SoundEffect>("Commander2");
             waterGun = Content.Load<Texture2D>("waterGun");
-
+            waterPellet = Content.Load<Texture2D>("waterPellet");
             dragonFly = Content.Load<Texture2D>("dragonFly"); 
             dragonFire = Content.Load<Texture2D>("dragonFireBreathe");
             dragonTexture = dragonFly;
@@ -150,7 +150,7 @@ namespace Summative_1_5
 
 
 
-
+            backGround = menuBg;
 
 
 
@@ -177,8 +177,23 @@ namespace Summative_1_5
             }
             else if (screen == Screen.Animation)
             {
+                backGround = grasslands;
                 // TODO: Add your update logic here
                 offset = new Rectangle(bunnyRect.X + bunnyRect.Width - 30, bunnyRect.Y + 20, 50,50);
+                offset2 = new Rectangle(bunnyRect2.X + bunnyRect2.Width - 30, bunnyRect2.Y + 22, 50, 50);
+                offset3 = new Rectangle(bunnyRect3.X + bunnyRect3.Width - 30, bunnyRect3.Y + 22, 50, 50);
+                offset4 = new Rectangle(bunnyRect4.X + bunnyRect4.Width - 30, bunnyRect4.Y + 22, 50, 50);
+                offset5 = new Rectangle(bunnyRect5.X + bunnyRect5.Width - 30, bunnyRect5.Y + 22, 50, 50);
+                if (!offCooked)
+                {
+                    bulletRect = new Rectangle(offset.X, offset.Y, 20, 20);
+                    bulletRect2 = new Rectangle(offset2.X, offset2.Y, 20, 20);
+                    bulletRect3 = new Rectangle(offset3.X, offset3.Y, 20, 20);
+                    bulletRect4 = new Rectangle(offset4.X, offset4.Y, 20, 20);
+                    bulletRect5 = new Rectangle(offset5.X, offset5.Y, 20, 20);
+                }
+
+                
                 dragonRect.X += (int)dragonSpeed.X;
                 dragonRect.Y += (int)dragonSpeed.Y;
                 bunnyRect.X += (int)bunnySpeed.X;
@@ -221,31 +236,43 @@ namespace Summative_1_5
                 {
                     wait += (float)gameTime.ElapsedGameTime.TotalSeconds;
                 }
-                if (army && !offCooked)
+                if (army && !triggerDigger)
                 {
 
                     armyShow += (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    armyGo += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    
 
-                    if (armyShow >= 2)
+                    if (armyShow >= 1.7)
                     {
-                        screen = Screen.Cooked;
+                       triggerDigger = true;
                     }
                 }
                
-                if (offCooked)
+                if (triggerDigger && !offCooked)
                 {
-                    bunnySpeed.X = 1;
-                    dragonTexture = speed;
+                    bunnySpeed.X = 1; 
                     if (bunnyRect.X == 570)
                     {
                         bunnySpeed = new Vector2(0, 0);
                         threshold = 0;
                         currentAnimationIndex = 0;
-                        
+                        armyGo += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                        if (armyGo >= 1)
+                        {
+                            screen = Screen.Cooked;
+
+                        }
                     }
                 }
-               
+               if (offCooked)
+                {
+                    dragonTexture = speed;
+                    bulletRect.X += (int)bulletSpeed.X;
+                    bulletRect2.X += (int)bulletSpeed.X;
+                    bulletRect3.X += (int)bulletSpeed.X;
+                    bulletRect4.X += (int)bulletSpeed.X;
+                    bulletRect5.X += (int)bulletSpeed.X;
+                }
 
 
             }
@@ -284,11 +311,14 @@ namespace Summative_1_5
            
             if (screen == Screen.Title)
             {
-
+                
+                _spriteBatch.Draw(backGround, window, Color.White);
                 _spriteBatch.Draw(playButtonImg, playButton, Color.White);
+                _spriteBatch.Draw(menuText, textRect, Color.White);
             }
             else if (screen == Screen.Animation)
             {
+                
                 _spriteBatch.Draw(backGround,window, Color.White);
                 // Only draw the area contained within the sourceRectangle.
                 _spriteBatch.Draw(charaset, bunnyRect, bunnyRectangles[currentAnimationIndex], Color.White);
@@ -306,10 +336,31 @@ namespace Summative_1_5
                     
 
                 }
-                if (offCooked == true && bunnyRect.X == 570) { 
+                if (triggerDigger == true && bunnyRect.X == 570) { 
                 
                 _spriteBatch.Draw(waterGun, offset, Color.White);
-                
+                    _spriteBatch.Draw(waterGun, offset, Color.White);
+                    _spriteBatch.Draw(waterGun, offset2, Color.White);
+                    _spriteBatch.Draw(waterGun, offset3, Color.White);
+                    _spriteBatch.Draw(waterGun, offset4, Color.White);
+                    _spriteBatch.Draw(waterGun, offset5, Color.White);
+
+                }
+                if (offCooked)
+                {
+                    _spriteBatch.Draw(waterPellet, bulletRect, Color.White);
+                    _spriteBatch.Draw(waterPellet, bulletRect2, Color.White);
+                    _spriteBatch.Draw(waterPellet, bulletRect3, Color.White);
+                    _spriteBatch.Draw(waterPellet, bulletRect4, Color.White);
+                    _spriteBatch.Draw(waterPellet, bulletRect5, Color.White);
+
+                    if (bulletRect.X == 600)
+                    {
+
+
+
+                    }
+
                 }
                 
             }
