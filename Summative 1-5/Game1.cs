@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using System;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -22,11 +23,19 @@ namespace Summative_1_5
         Screen screen;
         MouseState mouseState, prevMouseState;
         Texture2D titleScreen, bnnuy, playButtonImg, charaset, dragonFly, dragonFire, dragonTexture, speed, waterGun;
+        Texture2D backGround;
         Rectangle bunnyRect, window, playButton, dragonRect, bunnyRect2, bunnyRect3, bunnyRect4, bunnyRect5, speedRect, waterGunRect;
+        Rectangle offset;
         Vector2 bunnySpeed;
         SoundEffect commander;
         Vector2 dragonSpeed;
         Color bg;
+
+
+
+
+
+
         float wait = 0, cookedWait = 0, opacity = 0f, fadeSpeed = 0.5f, armyShow = 0, armyGo = 0;
         bool fly = true, army = false, soundBoom = false, offCooked = false;
 
@@ -64,21 +73,27 @@ namespace Summative_1_5
             window = new Rectangle(0, 0, 800, 800);
             //384, 182
             playButton = new Rectangle(300, 400, 200, 100);
-            bunnyRect = new Rectangle(100, 300, 100, 100);
-            bunnyRect2 = new Rectangle(-100, 200, 100, 100);
-            bunnyRect3 = new Rectangle(-100, 150, 50, 50);
-            bunnyRect4 = new Rectangle(-100, 400, 200, 200);
-            bunnyRect5 = new Rectangle(-100, 350, 150, 50);
+            bunnyRect = new Rectangle(100, 345, 100, 100);
+            bunnyRect2 = new Rectangle(0, 345, 100, 100);
+            bunnyRect3 = new Rectangle(-100, 345, 100, 100);
+            bunnyRect4 = new Rectangle(-200, 345, 100, 100);
+            bunnyRect5 = new Rectangle(-300, 345, 100, 100);
             bunnySpeed = new Vector2(1, 0);
 
             speedRect = new Rectangle(400, 350, 300, 300);
            
-            waterGunRect.X = bunnyRect.X + 5;
-            waterGunRect.Y = bunnyRect.Y - 5;
 
-            dragonRect = new Rectangle(800, 300, 100, 100);
+
+            dragonRect = new Rectangle(800, 330, 100, 100);
             dragonSpeed = new Vector2(0, 0);
 
+
+
+
+
+
+
+            
 
             _graphics.PreferredBackBufferWidth = window.Width;  // set this value to the desired width of your window
             _graphics.PreferredBackBufferHeight = window.Height;   // set this value to the desired height of your window
@@ -122,6 +137,7 @@ namespace Summative_1_5
             playButtonImg = Content.Load<Texture2D>("playButton");
             bnnuy = Content.Load<Texture2D>("LayDumbRabbit");
             charaset = Content.Load<Texture2D>("BunnyRoll45");
+            backGround = Content.Load<Texture2D>("grasslands");
 
             commander = Content.Load<SoundEffect>("Commander2");
             waterGun = Content.Load<Texture2D>("waterGun");
@@ -132,7 +148,12 @@ namespace Summative_1_5
 
             speed = Content.Load<Texture2D>("speed");
 
-                
+
+
+
+
+
+
 
 
             // TODO: use this.Content to load your game content here
@@ -157,7 +178,7 @@ namespace Summative_1_5
             else if (screen == Screen.Animation)
             {
                 // TODO: Add your update logic here
-
+                offset = new Rectangle(bunnyRect.X + bunnyRect.Width - 30, bunnyRect.Y + 20, 50,50);
                 dragonRect.X += (int)dragonSpeed.X;
                 dragonRect.Y += (int)dragonSpeed.Y;
                 bunnyRect.X += (int)bunnySpeed.X;
@@ -268,7 +289,7 @@ namespace Summative_1_5
             }
             else if (screen == Screen.Animation)
             {
-                _spriteBatch.Draw(waterGun, waterGunRect, Color.White);
+                _spriteBatch.Draw(backGround,window, Color.White);
                 // Only draw the area contained within the sourceRectangle.
                 _spriteBatch.Draw(charaset, bunnyRect, bunnyRectangles[currentAnimationIndex], Color.White);
                 if (army == true)
@@ -284,6 +305,11 @@ namespace Summative_1_5
                     _spriteBatch.Draw(dragonTexture, dragonRect, Color.White);
                     
 
+                }
+                if (offCooked == true && bunnyRect.X == 570) { 
+                
+                _spriteBatch.Draw(waterGun, offset, Color.White);
+                
                 }
                 
             }
