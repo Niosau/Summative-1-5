@@ -94,6 +94,7 @@ namespace Summative_1_5
             dragonSpeed = new Vector2(0, 0);
 
             bulletSpeed = new Vector2(7, 0);
+
             _graphics.PreferredBackBufferWidth = window.Width;  // set this value to the desired width of your window
             _graphics.PreferredBackBufferHeight = window.Height;   // set this value to the desired height of your window
             bunnyStartTimer = 0;
@@ -209,6 +210,7 @@ namespace Summative_1_5
                     threshold = 0;
                     currentAnimationIndex = 0;
                     dragonSpeed = new Vector2(-1, 0);
+                    fly = false;
                 }
 
 
@@ -276,24 +278,24 @@ namespace Summative_1_5
 
 
             }
-                else if (screen == Screen.Cooked)
-                {
+            else if (screen == Screen.Cooked)
+            {
 
-                   cookedWait += (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    if (cookedWait >= 3)
-                    {
-                    offCooked = true;
-                    screen = Screen.Animation;
-                    }
+                cookedWait += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (cookedWait >= 3)
+                {
+                offCooked = true;
+                screen = Screen.Animation;
+                }
                 
                     
 
-                    if (opacity < 1.0f)
-                    {
-                        opacity += fadeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                        if (opacity > 1.0f) opacity = 1.0f;
-                    }
+                if (opacity < 1.0f)
+                {
+                    opacity += fadeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    if (opacity > 1.0f) opacity = 1.0f;
                 }
+            }
 
 
             base.Update(gameTime);
@@ -353,13 +355,27 @@ namespace Summative_1_5
                     _spriteBatch.Draw(waterPellet, bulletRect3, Color.White);
                     _spriteBatch.Draw(waterPellet, bulletRect4, Color.White);
                     _spriteBatch.Draw(waterPellet, bulletRect5, Color.White);
-
-                    if (bulletRect.X == 600)
+                    if (bulletRect.X >= 600)
                     {
-
-
-
+                        bulletRect.X = 900;
                     }
+                    if (bulletRect2.X >= 600)
+                    {
+                        bulletRect2.X = 900;
+                    }
+                    if (bulletRect3.X >= 600)
+                    {
+                        bulletRect3.X = 900;
+                    }
+                    if (bulletRect4.X >= 600)
+                    {
+                        bulletRect4.X = 900;
+                    }
+                    if (bulletRect5.X >= 600)
+                    {
+                        bulletRect5.X = 900;
+                    }
+
 
                 }
                 
