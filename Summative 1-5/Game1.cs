@@ -27,7 +27,8 @@ namespace Summative_1_5
         Rectangle bunnyRect, window, playButton, dragonRect, bunnyRect2, bunnyRect3, bunnyRect4, bunnyRect5, speedRect;
         Rectangle offset, textRect, offset2, offset3, offset4, offset5, bulletRect, bulletRect2, bulletRect3, bulletRect4, bulletRect5;
         Vector2 bunnySpeed, bulletSpeed;
-        SoundEffect commander;
+        SoundEffect commander, gunshot, gunshot2, gunshot3, gunshot4, gunshot5, roar, holup, surprised;
+        private Song Menu, patient0;
         Vector2 dragonSpeed;
         Color bg;
 
@@ -140,7 +141,26 @@ namespace Summative_1_5
             grasslands = Content.Load<Texture2D>("grasslands");
             menuBg = Content.Load<Texture2D>("grassBg");
             menuText = Content.Load<Texture2D>("bunnyTxT");
+
+
             commander = Content.Load<SoundEffect>("Commander2");
+
+            gunshot = Content.Load<SoundEffect>("Gunshot Sound Effect Single Shot");
+            gunshot2 = Content.Load<SoundEffect>("Gunshot Sound Effect Single Shot");
+            gunshot3 = Content.Load<SoundEffect>("Gunshot Sound Effect Single Shot");
+            gunshot4 = Content.Load<SoundEffect>("Gunshot Sound Effect Single Shot");
+            gunshot5 = Content.Load<SoundEffect>("Gunshot Sound Effect Single Shot");
+
+            roar = Content.Load<SoundEffect>("Dragon Roar - Free Sound Effect");
+
+            surprised = Content.Load<SoundEffect>("Metal Gear Solid_ Alert (!)");
+
+            holup = Content.Load<SoundEffect>("Record Scratch Sound Effect");
+
+
+            Menu = Content.Load<Song>("Able Sisters Animal Crossing City Folk Music 1 Hour Extended HD");
+            patient0 = Content.Load<Song>("Official Tower Defense Simulator OST - Sound The Alarm_");
+
             waterGun = Content.Load<Texture2D>("waterGun");
             waterPellet = Content.Load<Texture2D>("waterPellet");
             dragonFly = Content.Load<Texture2D>("dragonFly"); 
@@ -152,7 +172,19 @@ namespace Summative_1_5
 
 
             backGround = menuBg;
+            MediaPlayer.IsRepeating = true;
 
+            // Adjust the volume (0.0f to 1.0f)
+            MediaPlayer.Volume = 0.5f;
+
+            // Check if the media player is already playing, if so, stop it
+            if (MediaPlayer.State == MediaState.Playing)
+            {
+                MediaPlayer.Stop();
+            }
+
+            // Start playing the background music
+            
 
 
 
@@ -175,9 +207,11 @@ namespace Summative_1_5
                 if (mouseState.LeftButton == ButtonState.Pressed && playButton.Contains(mouseState.Position))
                         screen = Screen.Animation;
 
+                MediaPlayer.Play(Menu);
             }
             else if (screen == Screen.Animation)
             {
+                MediaPlayer.Play(patient0);
                 backGround = grasslands;
                 // TODO: Add your update logic here
                 offset = new Rectangle(bunnyRect.X + bunnyRect.Width - 30, bunnyRect.Y + 20, 50,50);
@@ -228,7 +262,7 @@ namespace Summative_1_5
                     soundBoom = true;
                     commander.Play();
                 }
-                this.Window.Title = wait.ToString();
+                
                 if (wait >= 2 && !offCooked)
                 {
                     army = true;
@@ -355,23 +389,23 @@ namespace Summative_1_5
                     _spriteBatch.Draw(waterPellet, bulletRect3, Color.White);
                     _spriteBatch.Draw(waterPellet, bulletRect4, Color.White);
                     _spriteBatch.Draw(waterPellet, bulletRect5, Color.White);
-                    if (bulletRect.X >= 600)
+                    if (bulletRect.X >= 700)
                     {
                         bulletRect.X = 900;
                     }
-                    if (bulletRect2.X >= 600)
+                    if (bulletRect2.X >= 700)
                     {
                         bulletRect2.X = 900;
                     }
-                    if (bulletRect3.X >= 600)
+                    if (bulletRect3.X >= 700)
                     {
                         bulletRect3.X = 900;
                     }
-                    if (bulletRect4.X >= 600)
+                    if (bulletRect4.X >= 700)
                     {
                         bulletRect4.X = 900;
                     }
-                    if (bulletRect5.X >= 600)
+                    if (bulletRect5.X >= 700)
                     {
                         bulletRect5.X = 900;
                     }
