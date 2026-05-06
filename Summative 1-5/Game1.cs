@@ -7,6 +7,7 @@ using System;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
+using static System.Net.Mime.MediaTypeNames;
 enum Screen
 {
     Title,
@@ -22,8 +23,9 @@ namespace Summative_1_5
         private SpriteBatch _spriteBatch;
         Screen screen;
         MouseState mouseState, prevMouseState;
+        SpriteFont fontyMonty;
         Texture2D bnnuy, playButtonImg, charaset, dragonFly, dragonFire, dragonTexture, speed, waterGun, waterPellet;
-        Texture2D backGround, grasslands, menuBg, menuText;
+        Texture2D backGround, grasslands, menuBg, menuText, death, coolText, rocks;
         Rectangle bunnyRect, window, playButton, dragonRect, bunnyRect2, bunnyRect3, bunnyRect4, bunnyRect5, speedRect;
         Rectangle offset, textRect, offset2, offset3, offset4, offset5, bulletRect, bulletRect2, bulletRect3, bulletRect4, bulletRect5;
         Vector2 bunnySpeed, bulletSpeed;
@@ -39,7 +41,7 @@ namespace Summative_1_5
 
         float wait = 0, cookedWait = 0, opacity = 0f, fadeSpeed = 0.5f, armyShow = 0, armyGo = 0;
         bool fly = true, army = false, soundBoom = false, offCooked = false, triggerDigger = false, booomy = false, stopSound = false;
-
+        bool end = false, surprise = false, holdIt = false, yay = false, surprise2 = false, holdIt2 = false, yay2 = false, dragon = false, dragon2 = false;
         
         // A timer that stores milliseconds.
         float bunnyFrameTimer;
@@ -67,7 +69,7 @@ namespace Summative_1_5
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            
+           
             screen = Screen.Title;
             mouseState = Mouse.GetState();
             base.Initialize();
@@ -143,7 +145,7 @@ namespace Summative_1_5
             grasslands = Content.Load<Texture2D>("grasslands");
             menuBg = Content.Load<Texture2D>("grassBg");
             menuText = Content.Load<Texture2D>("bunnyTxT");
-
+            coolText = Content.Load<Texture2D>("coolText");
 
             commander = Content.Load<SoundEffect>("Commander2");
 
@@ -158,7 +160,7 @@ namespace Summative_1_5
             surprised = Content.Load<SoundEffect>("Metal Gear Solid_ Alert (!)");
 
             holup = Content.Load<SoundEffect>("Record Scratch Sound Effect");
-
+            rocks = Content.Load<Texture2D>("rocks");
 
             Menu = Content.Load<Song>("Able Sisters Animal Crossing City Folk Music 1 Hour Extended HD");
             patient0 = Content.Load<Song>("Official Tower Defense Simulator OST - Sound The Alarm_");
@@ -171,7 +173,9 @@ namespace Summative_1_5
 
             speed = Content.Load<Texture2D>("speed");
 
+            death = Content.Load<Texture2D>("gravestone");
 
+            fontyMonty = Content.Load<SpriteFont>("File");
 
             backGround = menuBg;
             MediaPlayer.IsRepeating = true;
@@ -219,10 +223,7 @@ namespace Summative_1_5
             }
             else if (screen == Screen.Animation)
             {
-                if (MediaPlayer.State == MediaState.Stopped)
-                {
-                    MediaPlayer.Play(patient0);
-                }
+                
 
 
                 
@@ -259,8 +260,14 @@ namespace Summative_1_5
                     currentAnimationIndex = 0;
                     dragonSpeed = new Vector2(-1, 0);
                     fly = false;
+                    surprise = true;
                 }
 
+                if (surprise && !surprise2)
+                {
+                    surprised.Play();
+                    surprise2 = true;
+                }
 
                 if (dragonRect.X == 680 && !soundBoom)
                 {
@@ -270,6 +277,12 @@ namespace Summative_1_5
                     threshold = 50;
                 }
 
+                if (dragonRect.X == 680 && !dragon2)
+                {
+                    dragon2 = true;
+                    
+                }
+
                 if (bunnyRect.X == window.X && !soundBoom)
                 {
                     bunnySpeed.X = 0;
@@ -277,7 +290,7 @@ namespace Summative_1_5
                     commander.Play();
                 }
                 
-                if (wait >= 2 && !offCooked)
+                if (wait >= 1.5 && !offCooked)
                 {
                     army = true;
   
@@ -292,7 +305,7 @@ namespace Summative_1_5
                     armyShow += (float)gameTime.ElapsedGameTime.TotalSeconds;
                     
 
-                    if (armyShow >= 1.7)
+                    if (armyShow >= 1)
                     {
                        triggerDigger = true;
                     }
@@ -307,11 +320,17 @@ namespace Summative_1_5
                         threshold = 0;
                         currentAnimationIndex = 0;
                         armyGo += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                        holdIt = true;
                         if (armyGo >= 1)
                         {
                             screen = Screen.Cooked;
 
                         }
+                    }
+                    if (holdIt && !holdIt2)
+                    {
+                        holdIt2 = true;
+                        holup.Play();
                     }
                 }
                if (offCooked)
@@ -336,11 +355,15 @@ namespace Summative_1_5
 
 
                 }
+                if (bulletRect5.X >= 900)
+                {
+                    screen = Screen.End;
+                }
 
             }
             else if (screen == Screen.Cooked)
             {
-
+                backGround = rocks;
                 cookedWait += (float)gameTime.ElapsedGameTime.TotalSeconds;
                 if (cookedWait >= 3)
                 {
@@ -356,9 +379,17 @@ namespace Summative_1_5
                     if (opacity > 1.0f) opacity = 1.0f;
                 }
             }
+            else if (screen == Screen.End)
+            {
+                backGround = death;
+                textRect = new Rectangle(155, 0, 500, 200);
+                if (mouseState.LeftButton == ButtonState.Pressed)
+                {
+                    Exit();
+                }
+            }
 
-
-            base.Update(gameTime);
+                base.Update(gameTime);
 
         }
                 // TODO: Add your update logic here
@@ -370,18 +401,18 @@ namespace Summative_1_5
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin();
-           
+
             if (screen == Screen.Title)
             {
-                
+
                 _spriteBatch.Draw(backGround, window, Color.White);
                 _spriteBatch.Draw(playButtonImg, playButton, Color.White);
                 _spriteBatch.Draw(menuText, textRect, Color.White);
             }
             else if (screen == Screen.Animation)
             {
-                
-                _spriteBatch.Draw(backGround,window, Color.White);
+
+                _spriteBatch.Draw(backGround, window, Color.White);
                 // Only draw the area contained within the sourceRectangle.
                 _spriteBatch.Draw(charaset, bunnyRect, bunnyRectangles[currentAnimationIndex], Color.White);
                 if (army == true)
@@ -392,15 +423,16 @@ namespace Summative_1_5
                     _spriteBatch.Draw(charaset, bunnyRect5, bunnyRectangles[currentAnimationIndex], Color.White);
                 }
 
-                if (bunnyRect.X == 570 || fly == false) 
+                if (bunnyRect.X == 570 || fly == false)
                 {
                     _spriteBatch.Draw(dragonTexture, dragonRect, Color.White);
-                    
+
 
                 }
-                if (triggerDigger == true && bunnyRect.X == 570) { 
-                
-                _spriteBatch.Draw(waterGun, offset, Color.White);
+                if (triggerDigger == true && bunnyRect.X == 570)
+                {
+
+                    _spriteBatch.Draw(waterGun, offset, Color.White);
                     _spriteBatch.Draw(waterGun, offset, Color.White);
                     _spriteBatch.Draw(waterGun, offset2, Color.White);
                     _spriteBatch.Draw(waterGun, offset3, Color.White);
@@ -438,14 +470,19 @@ namespace Summative_1_5
 
 
                 }
-                
+
             }
             else if (screen == Screen.Cooked)
             {
-                _spriteBatch.Draw(dragonTexture, new Vector2(300,300), Color.White);
+                _spriteBatch.Draw(backGround, window, Color.White);
+                _spriteBatch.Draw(dragonTexture, new Vector2(300, 300), Color.White);
                 _spriteBatch.Draw(speed, speedRect, Color.White * opacity);
             }
-
+            else if (screen == Screen.End)
+            {
+                _spriteBatch.Draw(backGround, window, Color.White);
+                _spriteBatch.Draw(coolText, textRect, Color.WhiteSmoke);
+            }
                 _spriteBatch.End();
 
             base.Draw(gameTime);
