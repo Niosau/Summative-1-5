@@ -38,7 +38,7 @@ namespace Summative_1_5
 
 
         float wait = 0, cookedWait = 0, opacity = 0f, fadeSpeed = 0.5f, armyShow = 0, armyGo = 0;
-        bool fly = true, army = false, soundBoom = false, offCooked = false, triggerDigger = false;
+        bool fly = true, army = false, soundBoom = false, offCooked = false, triggerDigger = false, booomy = false, stopSound = false;
 
         
         // A timer that stores milliseconds.
@@ -101,6 +101,8 @@ namespace Summative_1_5
             bunnyStartTimer = 0;
             _graphics.ApplyChanges();
             base.Initialize();
+
+
         }
 
         protected override void LoadContent()
@@ -177,11 +179,7 @@ namespace Summative_1_5
             // Adjust the volume (0.0f to 1.0f)
             MediaPlayer.Volume = 0.5f;
 
-            // Check if the media player is already playing, if so, stop it
-            if (MediaPlayer.State == MediaState.Playing)
-            {
-                MediaPlayer.Stop();
-            }
+            
 
             // Start playing the background music
             
@@ -204,14 +202,30 @@ namespace Summative_1_5
             prevMouseState = mouseState;
             if (screen == Screen.Title)
             {
+                if (MediaPlayer.State == MediaState.Stopped)
+                {
+                    MediaPlayer.Play(Menu);
+                }
                 if (mouseState.LeftButton == ButtonState.Pressed && playButton.Contains(mouseState.Position))
-                        screen = Screen.Animation;
+                {
+                    screen = Screen.Animation;
 
-                MediaPlayer.Play(Menu);
+                    MediaPlayer.Stop();
+
+                }
+                // Check if the media player is already playing, if so, stop it
+                
+                
             }
             else if (screen == Screen.Animation)
             {
-                MediaPlayer.Play(patient0);
+                if (MediaPlayer.State == MediaState.Stopped)
+                {
+                    MediaPlayer.Play(patient0);
+                }
+
+
+                
                 backGround = grasslands;
                 // TODO: Add your update logic here
                 offset = new Rectangle(bunnyRect.X + bunnyRect.Width - 30, bunnyRect.Y + 20, 50,50);
@@ -308,8 +322,20 @@ namespace Summative_1_5
                     bulletRect3.X += (int)bulletSpeed.X;
                     bulletRect4.X += (int)bulletSpeed.X;
                     bulletRect5.X += (int)bulletSpeed.X;
+                    booomy = true;
                 }
+               if (booomy && !stopSound)
+                {
+                    booomy = false;
+                    stopSound = true;
+                    gunshot.Play();
+                    gunshot.Play();
+                    gunshot.Play();
+                    gunshot.Play();
+                    gunshot.Play();
 
+
+                }
 
             }
             else if (screen == Screen.Cooked)
