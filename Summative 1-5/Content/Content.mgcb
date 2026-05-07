@@ -19,11 +19,11 @@
 /processorParam:Quality=Best
 /build:Able Sisters Animal Crossing City Folk Music 1 Hour Extended HD.mp3
 
-#begin asdfmovie grave sound.mp3
-/importer:Mp3Importer
-/processor:SongProcessor
+#begin asdfmovie grave sound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:asdfmovie grave sound.mp3
+/build:asdfmovie grave sound.wav
 
 #begin BunnyRoll45.png
 /importer:TextureImporter
@@ -85,11 +85,11 @@
 /processorParam:TextureFormat=Color
 /build:coolText.png
 
-#begin Dragon Roar - Free Sound Effect.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
+#begin Dragon growl sound effect.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
 /processorParam:Quality=Best
-/build:Dragon Roar - Free Sound Effect.wav
+/build:Dragon growl sound effect.mp3
 
 #begin dragonFireBreathe.webp
 /importer:TextureImporter
@@ -181,6 +181,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Metal Gear Solid_ Alert (!).wav
+
+#begin Official Tower Defense Simulator OST - Ducky Boom.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Official Tower Defense Simulator OST - Ducky Boom.mp3
 
 #begin Official Tower Defense Simulator OST - Sound The Alarm_.mp3
 /importer:Mp3Importer

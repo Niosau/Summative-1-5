@@ -33,7 +33,7 @@ namespace Summative_1_5
         private Song Menu, patient0;
         Vector2 dragonSpeed;
         Color bg;
-
+        SoundEffectInstance roars;
 
 
 
@@ -42,7 +42,7 @@ namespace Summative_1_5
         float wait = 0, cookedWait = 0, opacity = 0f, fadeSpeed = 0.5f, armyShow = 0, armyGo = 0;
         bool fly = true, army = false, soundBoom = false, offCooked = false, triggerDigger = false, booomy = false, stopSound = false;
         bool end = false, surprise = false, holdIt = false, yay = false, surprise2 = false, holdIt2 = false, yay2 = false, dragon = false, dragon2 = false;
-        
+        bool end2 = false;
         // A timer that stores milliseconds.
         float bunnyFrameTimer;
         int totalAnimations = 8; // change this when you add more
@@ -155,7 +155,7 @@ namespace Summative_1_5
             gunshot4 = Content.Load<SoundEffect>("Gunshot Sound Effect Single Shot");
             gunshot5 = Content.Load<SoundEffect>("Gunshot Sound Effect Single Shot");
 
-            roar = Content.Load<SoundEffect>("Dragon Roar - Free Sound Effect");
+            roar = Content.Load<SoundEffect>("Dragon growl sound effect");
 
             deaded = Content.Load<SoundEffect>("asdfmovie grave sound");
 
@@ -165,7 +165,8 @@ namespace Summative_1_5
             rocks = Content.Load<Texture2D>("rocks");
 
             Menu = Content.Load<Song>("Able Sisters Animal Crossing City Folk Music 1 Hour Extended HD");
-            patient0 = Content.Load<Song>("Official Tower Defense Simulator OST - Sound The Alarm_");
+            patient0 = Content.Load<Song>("Official Tower Defense Simulator OST - Ducky Boom");
+
 
             waterGun = Content.Load<Texture2D>("waterGun");
             waterPellet = Content.Load<Texture2D>("waterPellet");
@@ -225,10 +226,13 @@ namespace Summative_1_5
             }
             else if (screen == Screen.Animation)
             {
-                
+                if (MediaPlayer.State == MediaState.Stopped)
+                {
+                    MediaPlayer.Play(patient0);
+                }
+                MediaPlayer.Volume = 0.3f;
 
 
-                
                 backGround = grasslands;
                 // TODO: Add your update logic here
                 offset = new Rectangle(bunnyRect.X + bunnyRect.Width - 30, bunnyRect.Y + 20, 50,50);
@@ -282,17 +286,19 @@ namespace Summative_1_5
                 if (dragonRect.X == 680 && !dragon2)
                 {
                     dragon2 = true;
-                    
+                    roar.Play(); 
                 }
 
                 if (bunnyRect.X == window.X && !soundBoom)
                 {
+                    roar.Stop();
                     bunnySpeed.X = 0;
                     soundBoom = true;
                     commander.Play();
+                    
                 }
                 
-                if (wait >= 1.5 && !offCooked)
+                if (wait >= 1 && !offCooked)
                 {
                     army = true;
   
@@ -365,6 +371,7 @@ namespace Summative_1_5
             }
             else if (screen == Screen.Cooked)
             {
+                MediaPlayer.Stop();
                 backGround = rocks;
                 cookedWait += (float)gameTime.ElapsedGameTime.TotalSeconds;
                 if (cookedWait >= 3)
@@ -384,6 +391,18 @@ namespace Summative_1_5
             else if (screen == Screen.End)
             {
                 backGround = death;
+                
+                if (end && !end2)
+                {
+                    deaded.Play();
+
+                }
+                
+
+
+
+
+
                 deaded.Play();
                 textRect = new Rectangle(155, 0, 500, 200);
                 if (mouseState.LeftButton == ButtonState.Pressed)
