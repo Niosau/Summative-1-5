@@ -19,6 +19,12 @@
 /processorParam:Quality=Best
 /build:Able Sisters Animal Crossing City Folk Music 1 Hour Extended HD.mp3
 
+#begin asdfmovie grave sound.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:asdfmovie grave sound.mp3
+
 #begin BunnyRoll45.png
 /importer:TextureImporter
 /processor:TextureProcessor

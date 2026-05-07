@@ -29,7 +29,7 @@ namespace Summative_1_5
         Rectangle bunnyRect, window, playButton, dragonRect, bunnyRect2, bunnyRect3, bunnyRect4, bunnyRect5, speedRect;
         Rectangle offset, textRect, offset2, offset3, offset4, offset5, bulletRect, bulletRect2, bulletRect3, bulletRect4, bulletRect5;
         Vector2 bunnySpeed, bulletSpeed;
-        SoundEffect commander, gunshot, gunshot2, gunshot3, gunshot4, gunshot5, roar, holup, surprised;
+        SoundEffect commander, gunshot, gunshot2, gunshot3, gunshot4, gunshot5, roar, holup, surprised, deaded;
         private Song Menu, patient0;
         Vector2 dragonSpeed;
         Color bg;
@@ -156,6 +156,8 @@ namespace Summative_1_5
             gunshot5 = Content.Load<SoundEffect>("Gunshot Sound Effect Single Shot");
 
             roar = Content.Load<SoundEffect>("Dragon Roar - Free Sound Effect");
+
+            deaded = Content.Load<SoundEffect>("asdfmovie grave sound");
 
             surprised = Content.Load<SoundEffect>("Metal Gear Solid_ Alert (!)");
 
@@ -382,6 +384,7 @@ namespace Summative_1_5
             else if (screen == Screen.End)
             {
                 backGround = death;
+                deaded.Play();
                 textRect = new Rectangle(155, 0, 500, 200);
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {
